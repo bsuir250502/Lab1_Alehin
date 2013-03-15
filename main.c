@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <unistd.h>
+#include <getopt.h>
 #include <malloc.h>
 #include <string.h>
 #define all_string_maxsize 30
@@ -21,25 +23,23 @@ struct info {
         struct st2 was;
     } x;
 };
-void print_alphabet(struct info *child)
+void print_alphabet(struct info *child, char *illness)
 {
-    puts("***");
     int i, j;
-    char hz[20] = "ospa";       // temporarily
     for (i = 'A'; i <= 'Z'; i++)
         for (j = 0; j < child_num; j++)
-            if (!strcmp(hz, child[j].last_illness)
+            if (!strcmp(illness, child[j].last_illness)
                 && child[j].child_surname[0] == i) {
                 if (child[j].hospital_cure)
                     printf
-                        ("%d: %s hospital #%s address: %s doc: %s, illness:%s\n",
-                         j, child[j].child_surname,
+                        ("\n%s hospital #%s address: %s doc: %s, illness:%s\n",
+                         child[j].child_surname,
                          child[j].x.was.hosp_num,
                          child[j].x.was.hosp_address,
                          child[j].x.was.surname_hosp_doc,
                          child[j].last_illness);
                 else
-                    printf("%d: %s , Doc:%s illness:%s\n", j,
+                    printf("%s , Doc:%s illness:%s\n",
                            child[j].child_surname,
                            child[j].x.was_not.surname_distr_doc,
                            child[j].last_illness);
@@ -92,11 +92,34 @@ void init_database(struct info *child)
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
     struct info child[child_num];
+    int opt = 0;
     init_database(child);
-    database_print(child);
-    print_alphabet(child);
+    opt = getopt(argc, argv, "pl:h");
+    while( opt != -1 ) {
+        switch( opt ) {
+            case 'p':
+                database_print(child);
+                break;
+                
+            case 'l':
+				print_alphabet(child, optarg);
+                break;
+                
+            case 'h':  // later
+            
+				break;
+                
+            default:
+				break;
+        }
+        
+        opt = getopt(argc, argv, "pl:h");
+    }
+    
+    
+    
     return 0;
 }
