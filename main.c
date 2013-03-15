@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "readme.c"
 #include <getopt.h>
 #include <malloc.h>
 #include <string.h>
@@ -25,7 +26,7 @@ struct info {
 void print_alphabet(struct info *child, char *illness)
 {
     int i, j;
-    printf("\nPatients with %s:\n", illness);
+    printf("Patients with %s:\n", illness);
     for (i = 'A'; i <= 'Z'; i++)
         for (j = 0; j < child_num; j++)
             if (!strcmp(illness, child[j].last_illness)
@@ -108,6 +109,8 @@ int main(int argc, char *argv[])
     int opt = 0;
     init_database(child);
     opt = getopt(argc, argv, "pl:h");
+    if (opt == -1)
+        readme();
     while (opt != -1) {
         switch (opt) {
         case 'p':
@@ -118,8 +121,8 @@ int main(int argc, char *argv[])
             print_alphabet(child, optarg);
             break;
 
-        case 'h':              /* later */
-
+        case 'h':
+            readme();
             break;
 
         default:
