@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "readme.c"
 #include <getopt.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 #define all_string_maxsize 30
 #define child_num 5
 
@@ -23,35 +23,49 @@ struct info {
         struct hosp_cure hospital;
     } ch_union;
 };
-void print_alphabet(struct info *child, char *illness)
+
+int name_cmp(const void *a, const void *b)
 {
-    int i, j;
-    printf("Patients with %s:\n", illness);
-    for (i = 'A'; i <= 'Z'; i++)
-        for (j = 0; j < child_num; j++)
-            if (!strcmp(illness, child[j].last_illness)
-                && child[j].child_surname[0] == i) {
-                if (child[j].hospital_cure)
-                    printf
-                        ("%s, hospital #%s, address: %s, doctor: %s, illness: %s\n",
-                         child[j].child_surname,
-                         child[j].ch_union.hospital.hosp_num,
-                         child[j].ch_union.hospital.hosp_address,
-                         child[j].ch_union.hospital.surname_hosp_doc,
-                         child[j].last_illness);
-                else
-                    printf("%s, doctor: %s, illness: %s\n",
-                           child[j].child_surname,
-                           child[j].ch_union.home.surname_distr_doc,
-                           child[j].last_illness);
-            }
+    return strcmp((*(struct info *) a).child_surname,
+                  (*(struct info *) b).child_surname);
 }
 
-void database_print(struct info *child)
+void readme(void)
+{
+    puts("Usage: ./main [mode]");
+    puts("  -p                print data from database");
+    puts("  -l <illness>      alphabetically sort list of patients with");
+    puts("                    this illness");
+    puts("  -h                help");
+}
+
+void print_alphabet(struct info *child, char *illness, int child_num_typed)
+{
+    int i;
+    printf("Patients with %s:\n", illness);
+    for (i = 0; i < child_num_typed; i++)
+        if (!strcmp(illness, child[i].last_illness)) {
+            if (child[i].hospital_cure)
+                printf
+                    ("%s, hospital #%s, address: %s, doctor: %s, illness: %s\n",
+                     child[i].child_surname,
+                     child[i].ch_union.hospital.hosp_num,
+                     child[i].ch_union.hospital.hosp_address,
+                     child[i].ch_union.hospital.surname_hosp_doc,
+                     child[i].last_illness);
+            else
+                printf("%s, doctor: %s, illness: %s\n",
+                       child[i].child_surname,
+                       child[i].ch_union.home.surname_distr_doc,
+                       child[i].last_illness);
+        }
+}
+
+void print_database(struct info *child, int child_num_typed)
 {
     int i;
     puts("Database:");
-    for (i = 0; i < child_num; i++)
+    for (i = 0; i < child_num_typed; i++)
         if (child[i].hospital_cure)
             printf
                 ("%d: %s, hospital #%s, address: %s, doctor: %s, illness: %s\n",
@@ -67,8 +81,9 @@ void database_print(struct info *child)
                    child[i].last_illness);
 }
 
-void init_database(struct info *child)
+int init_database(struct info *child)
 {
+    int child_num_typed = 5;
     child[0] = (struct info) {
     .last_illness = "anemia",.child_surname = "Alehin",.hospital_cure =
             1};
@@ -90,35 +105,39 @@ void init_database(struct info *child)
             "Zapadnaya street",.surname_hosp_doc = "Maksimov"};
 
     child[3] = (struct info) {
-    .last_illness = "mumps",.child_surname = "Petrov",.hospital_cure =
+    .last_illness = "anemia",.child_surname = "Petrov",.hospital_cure =
             0};
     child[3].ch_union.home = (struct home_cure) {
     .surname_distr_doc = "Maksimova"};
 
     child[4] = (struct info) {
-    .last_illness = "anemia",.child_surname = "Frynse",.hospital_cure =
+    .last_illness = "anemia",.child_surname = "Aleain",.hospital_cure =
             1};
     child[4].ch_union.hospital = (struct hosp_cure) {
     .hosp_num = "4",.hosp_address = "West street",.surname_hosp_doc =
             "Melnova"};
+    return child_num_typed;
 }
 
 int main(int argc, char *argv[])
 {
+
+    const char *options = "pl:h";
+    int opt = 0, child_num_typed;
     struct info child[child_num];
-    int opt = 0;
-    init_database(child);
-    opt = getopt(argc, argv, "pl:h");
+    child_num_typed = init_database(child);
+    qsort(child, child_num_typed, sizeof(struct info), name_cmp);
+    opt = getopt(argc, argv, options);
     if (opt == -1)
         readme();
     while (opt != -1) {
         switch (opt) {
         case 'p':
-            database_print(child);
+            print_database(child, child_num_typed);
             break;
 
         case 'l':
-            print_alphabet(child, optarg);
+            print_alphabet(child, optarg, child_num_typed);
             break;
 
         case 'h':
@@ -128,7 +147,7 @@ int main(int argc, char *argv[])
         default:
             break;
         }
-        opt = getopt(argc, argv, "pl:h");
+        opt = getopt(argc, argv, options);
     }
     return 0;
 }
