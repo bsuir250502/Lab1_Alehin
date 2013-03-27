@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <malloc.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #define all_string_maxsize 30
 #define child_num 5
 
@@ -84,44 +84,49 @@ void print_database(struct info *child, int child_num_typed)
 int init_database(struct info *child)
 {
     int child_num_typed = 5;
-    child[0] = (struct info) {
-    .last_illness = "anemia",.child_surname = "Alehin",.hospital_cure =
-            1};
-    child[0].ch_union.hospital = (struct hosp_cure) {
-    .hosp_num = "12",.hosp_address =
-            "Kalinowski street",.surname_hosp_doc = "Bobr"};
+    strncpy(child[0].child_surname, "Alehin", all_string_maxsize);
+    strncpy(child[0].last_illness, "anemia", all_string_maxsize);
+    child[0].hospital_cure = 1;
+    strncpy(child[0].ch_union.hospital.hosp_num, "12", all_string_maxsize);
+    strncpy(child[0].ch_union.hospital.hosp_address, "Kalinowski street",
+            all_string_maxsize);
+    strncpy(child[0].ch_union.hospital.surname_hosp_doc, "Bobr",
+            all_string_maxsize);
 
-    child[1] = (struct info) {
-    .last_illness = "pneumonia",.child_surname =
-            "Ivanov",.hospital_cure = 0};
-    child[1].ch_union.home = (struct home_cure) {
-    .surname_distr_doc = "Kashliak"};
+    strncpy(child[1].child_surname, "Ivanov", all_string_maxsize);
+    strncpy(child[1].last_illness, "pneumonia", all_string_maxsize);
+    child[1].hospital_cure = 0;
+    strncpy(child[1].ch_union.home.surname_distr_doc, "Kashliak",
+            all_string_maxsize);
 
-    child[2] = (struct info) {
-    .last_illness = "tetanus",.child_surname =
-            "Sidorov",.hospital_cure = 1};
-    child[2].ch_union.hospital = (struct hosp_cure) {
-    .hosp_num = "5",.hosp_address =
-            "Zapadnaya street",.surname_hosp_doc = "Maksimov"};
+    strncpy(child[2].child_surname, "Sidorov", all_string_maxsize);
+    strncpy(child[2].last_illness, "tetanus", all_string_maxsize);
+    child[2].hospital_cure = 1;
+    strncpy(child[2].ch_union.hospital.hosp_num, "5", all_string_maxsize);
+    strncpy(child[2].ch_union.hospital.hosp_address, "Zapadnaya street",
+            all_string_maxsize);
+    strncpy(child[2].ch_union.hospital.surname_hosp_doc, "Maksimov",
+            all_string_maxsize);
 
-    child[3] = (struct info) {
-    .last_illness = "anemia",.child_surname = "Petrov",.hospital_cure =
-            0};
-    child[3].ch_union.home = (struct home_cure) {
-    .surname_distr_doc = "Maksimova"};
+    strncpy(child[3].child_surname, "Petrov", all_string_maxsize);
+    strncpy(child[3].last_illness, "anemia", all_string_maxsize);
+    child[3].hospital_cure = 0;
+    strncpy(child[3].ch_union.home.surname_distr_doc, "Maksimova",
+            all_string_maxsize);
 
-    child[4] = (struct info) {
-    .last_illness = "anemia",.child_surname = "Aleain",.hospital_cure =
-            1};
-    child[4].ch_union.hospital = (struct hosp_cure) {
-    .hosp_num = "4",.hosp_address = "West street",.surname_hosp_doc =
-            "Melnova"};
+    strncpy(child[4].child_surname, "Aleain", all_string_maxsize);
+    strncpy(child[4].last_illness, "tetanus", all_string_maxsize);
+    child[4].hospital_cure = 1;
+    strncpy(child[4].ch_union.hospital.hosp_num, "4", all_string_maxsize);
+    strncpy(child[4].ch_union.hospital.hosp_address, "West street",
+            all_string_maxsize);
+    strncpy(child[4].ch_union.hospital.surname_hosp_doc, "Melnova",
+            all_string_maxsize);
     return child_num_typed;
 }
 
 int main(int argc, char *argv[])
 {
-
     const char *options = "pl:h";
     int opt = 0, child_num_typed;
     struct info child[child_num];
